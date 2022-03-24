@@ -9,69 +9,68 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using razor_ef_2022.Model;
 
-namespace razor_ef_2022.Pages.Games
+namespace razor_ef_2022.Pages.Games;
+public class EditModel : PageModel
 {
-    public class EditModel : PageModel
-    {
-        private readonly GameStoreContext _context;
+    private readonly GameStoreContext _context;
 
-        public EditModel(GameStoreContext context)
+    public EditModel(GameStoreContext context)
+    {
+        _context = context;
+    }
+
+    [BindProperty]
+    public Game Game { get; set; }
+
+    public async Task<IActionResult> OnGetAsync(int? id)
+    {
+        if (id == null)
         {
-            _context = context;
+            return NotFound();
         }
 
-        [BindProperty]
-        public Game Game { get; set; }
+        Game = await _context.Game.FirstOrDefaultAsync(m => m.GameId == id);
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        if (Game == null)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
+        }
+        return Page();
+    }
 
-            Game = await _context.Game.FirstOrDefaultAsync(m => m.GameId == id);
-
-            if (Game == null)
-            {
-                return NotFound();
-            }
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see https://aka.ms/RazorPagesCRUD.
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (!ModelState.IsValid)
+        {
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        _context.Attach(Game).State = EntityState.Modified;
+
+        try
         {
-            if (!ModelState.IsValid)
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!GameExists(Game.GameId))
             {
-                return Page();
+                return NotFound();
             }
-
-            _context.Attach(Game).State = EntityState.Modified;
-
-            try
+            else
             {
-                await _context.SaveChangesAsync();
+                throw;
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!GameExists(Game.GameId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return RedirectToPage("./Index");
         }
 
-        private bool GameExists(int id)
-        {
-            return _context.Game.Any(e => e.GameId == id);
-        }
+        return RedirectToPage("./Index");
+    }
+
+    private bool GameExists(int id)
+    {
+        return _context.Game.Any(e => e.GameId == id);
     }
 }
+

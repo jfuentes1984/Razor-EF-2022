@@ -8,22 +8,22 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using razor_ef_2022.Model;
 
-namespace razor_ef_2022.Pages.Games
+namespace razor_ef_2022.Pages.Games;
+
+public class IndexModel : PageModel
 {
-    public class IndexModel : PageModel
+    private readonly GameStoreContext _context;
+
+    public IndexModel(GameStoreContext context)
     {
-        private readonly GameStoreContext _context;
+        _context = context;
+    }
 
-        public IndexModel(GameStoreContext context)
-        {
-            _context = context;
-        }
+    public IList<Game> Games { get; set; }
 
-        public IList<Game> Game { get;set; }
-
-        public async Task OnGetAsync()
-        {
-            Game = await _context.Game.ToListAsync();
-        }
+    public async Task OnGetAsync()
+    {
+        Games = await _context.Game.ToListAsync();
     }
 }
+

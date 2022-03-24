@@ -8,52 +8,51 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using razor_ef_2022.Model;
 
-namespace razor_ef_2022.Pages.Games
+namespace razor_ef_2022.Pages.Games;
+public class DeleteModel : PageModel
 {
-    public class DeleteModel : PageModel
+    private readonly GameStoreContext _context;
+
+    public DeleteModel(GameStoreContext context)
     {
-        private readonly GameStoreContext _context;
+        _context = context;
+    }
 
-        public DeleteModel(GameStoreContext context)
+    [BindProperty]
+    public Game Game { get; set; }
+
+    public async Task<IActionResult> OnGetAsync(int? id)
+    {
+        if (id == null)
         {
-            _context = context;
+            return NotFound();
         }
 
-        [BindProperty]
-        public Game Game { get; set; }
+        Game = await _context.Game.FirstOrDefaultAsync(m => m.GameId == id);
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        if (Game == null)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
+        }
+        return Page();
+    }
 
-            Game = await _context.Game.FirstOrDefaultAsync(m => m.GameId == id);
-
-            if (Game == null)
-            {
-                return NotFound();
-            }
-            return Page();
+    public async Task<IActionResult> OnPostAsync(int? id)
+    {
+        if (id == null)
+        {
+            return NotFound();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        Game = await _context.Game.FindAsync(id);
+
+        if (Game != null)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            Game = await _context.Game.FindAsync(id);
-
-            if (Game != null)
-            {
-                _context.Game.Remove(Game);
-                await _context.SaveChangesAsync();
-            }
-
-            return RedirectToPage("./Index");
+            _context.Game.Remove(Game);
+            await _context.SaveChangesAsync();
         }
+
+        return RedirectToPage("./Index");
     }
 }
+

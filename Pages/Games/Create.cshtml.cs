@@ -8,37 +8,36 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using razor_ef_2022.Model;
 
-namespace razor_ef_2022.Pages.Games
+namespace razor_ef_2022.Pages.Games;
+public class CreateModel : PageModel
 {
-    public class CreateModel : PageModel
+    private readonly GameStoreContext _context;
+
+    public CreateModel(GameStoreContext context)
     {
-        private readonly GameStoreContext _context;
+        _context = context;
+    }
 
-        public CreateModel(GameStoreContext context)
-        {
-            _context = context;
-        }
+    public IActionResult OnGet()
+    {
+        return Page();
+    }
 
-        public IActionResult OnGet()
+    [BindProperty]
+    public Game Game { get; set; }
+
+    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (!ModelState.IsValid)
         {
             return Page();
         }
 
-        [BindProperty]
-        public Game Game { get; set; }
+        _context.Game.Add(Game);
+        await _context.SaveChangesAsync();
 
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
-            _context.Game.Add(Game);
-            await _context.SaveChangesAsync();
-
-            return RedirectToPage("./Index");
-        }
+        return RedirectToPage("./Index");
     }
 }
+

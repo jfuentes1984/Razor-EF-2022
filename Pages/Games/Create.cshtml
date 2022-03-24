@@ -24,7 +24,7 @@
                 <span asp-validation-for="Game.Price" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Game.DatePublished" class="control-label"></label>
+                Published
                 <input asp-for="Game.DatePublished" class="form-control" />
                 <span asp-validation-for="Game.DatePublished" class="text-danger"></span>
             </div>
@@ -45,5 +45,5 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

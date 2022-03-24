@@ -8,33 +8,32 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using razor_ef_2022.Model;
 
-namespace razor_ef_2022.Pages.Games
+namespace razor_ef_2022.Pages.Games;
+public class DetailsModel : PageModel
 {
-    public class DetailsModel : PageModel
+    private readonly GameStoreContext _context;
+
+    public DetailsModel(GameStoreContext context)
     {
-        private readonly GameStoreContext _context;
+        _context = context;
+    }
 
-        public DetailsModel(GameStoreContext context)
+    public Game Game { get; set; }
+
+    public async Task<IActionResult> OnGetAsync(int? id)
+    {
+        if (id == null)
         {
-            _context = context;
+            return NotFound();
         }
 
-        public Game Game { get; set; }
+        Game = await _context.Game.FirstOrDefaultAsync(m => m.GameId == id);
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        if (Game == null)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            Game = await _context.Game.FirstOrDefaultAsync(m => m.GameId == id);
-
-            if (Game == null)
-            {
-                return NotFound();
-            }
-            return Page();
+            return NotFound();
         }
+        return Page();
     }
 }
+
