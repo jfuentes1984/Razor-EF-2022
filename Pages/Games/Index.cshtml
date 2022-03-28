@@ -10,6 +10,25 @@
 <p>
     <a asp-page="Create">Create New</a>
 </p>
+<p>
+<form>
+    <p>
+        Filter by Titles:
+        <input type="text" asp-for="Query" />
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+</p>
+<p>
+<form>
+    <p>
+        Filter by Published:
+        <input asp-for="Game.DatePublished" class="form-control" />
+        <span asp-validation-for="Game.DatePublished" class="text-danger"></span>
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+</p>
 <table class="table">
     <thead>
         <tr>
@@ -20,7 +39,7 @@
                 @Html.DisplayNameFor(model => model.Games[0].Price)
             </th>
             <th>
-                Published
+                @Html.DisplayNameFor(model => model.Games[0].DatePublished)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Games[0].Genre)
